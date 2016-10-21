@@ -6,7 +6,7 @@ re-creating issues locally.
 ## Setup
 
 ```bash
-export JENKINS_USER="xxx"
+export JENKINS_LOGIN="xxx"
 export JENKINS_TOKEN="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
