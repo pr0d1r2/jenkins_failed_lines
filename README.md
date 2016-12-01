@@ -59,3 +59,17 @@ bundle exec rspec `bundle exec ruby jenkins_failed_lines.rb https://jenkins.exam
 ```
 
 And go make a coffee.
+
+## Troubleshooting
+
+### missing the Overall/Read permission
+
+In case you encounter problem:
+
+```
+pr0d1r2 is missing the Overall/Read permission
+```
+
+Solution in some cases is to use GitHub access token instead of jenkins
+one as some organisations build authentication on top of GitHub.
+Please visit https://github.com/settings/tokens to get your token.
