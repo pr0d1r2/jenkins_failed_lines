@@ -40,8 +40,17 @@ class JenkinsFailedLines
   def failed_rspec_lines
     check_authorized!
     stack_traces.map do |stack_trace|
-      stack_trace.text.split("\n").detect { |line| line =~ /spec\.rb:/ }.split(':').slice(0..1).join(':')
-    end.uniq
+      begin
+        stack_trace
+          .text
+          .split("\n")
+          .detect { |line| line =~ /spec\.rb:/ }
+          .split(':')
+          .slice(0..1)
+          .join(':')
+      rescue NoMethodError
+      end
+    end.compact.uniq
   end
 
   def stack_traces
