@@ -44,7 +44,7 @@ class JenkinsFailedLines
         stack_trace
           .text
           .split("\n")
-          .detect { |line| line =~ /spec\.rb:/ }
+          .detect { |line| line =~ /spec\.rb:/ && !line.include?('# ./') }
           .split(':')
           .slice(0..1)
           .join(':')
