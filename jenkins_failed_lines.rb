@@ -28,14 +28,22 @@ class JenkinsFailedLines
   end
 
   def failed_lines
-    if child_reports.any?
-      failed_cucumber_lines
+    if cucumber?
+      if child_reports.any?
+        failed_cucumber_lines_from_child_reports
+      else
+        failed_cucumber_lines_from_stack_traces
+      end
     else
       failed_rspec_lines
     end
   end
 
   private
+
+  def cucumber?
+    job.include?('-features')
+  end
 
   def failed_rspec_lines
     check_authorized!
@@ -57,7 +65,23 @@ class JenkinsFailedLines
     xml_doc.xpath('//errorStackTrace')
   end
 
-  def failed_cucumber_lines
+  def failed_cucumber_lines_from_stack_traces
+    check_authorized!
+    stack_traces.map do |stack_trace|
+      begin
+        stack_trace
+          .text
+          .split("\n")
+          .detect { |line| line =~ /\.feature/ }
+          .split(':')
+          .slice(0..1)
+          .join(':')
+      rescue NoMethodError
+      end
+    end.compact.uniq
+  end
+
+  def failed_cucumber_lines_from_child_reports
     check_authorized!
     failed_child_report_urls.map do |failed_child_report_url|
       content = cache(failed_child_report_url.gsub(/[^0-9A-Za-z]/i, '_')) do
