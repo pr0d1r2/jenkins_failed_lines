@@ -62,7 +62,7 @@ class JenkinsFailedLines
   end
 
   def stack_traces
-    xml_doc.xpath('//errorStackTrace')
+    valid_xml_doc.xpath('//errorStackTrace')
   end
 
   def failed_cucumber_lines_from_stack_traces
@@ -118,9 +118,15 @@ class JenkinsFailedLines
   end
 
   def child_reports
-    @child_reports ||= xml_doc.xpath('//childReport')
+    @child_reports ||= valid_xml_doc.xpath('//childReport')
   end
 
+  def valid_xml_doc
+    if xml_doc.xpath('//body').text.include?('HTTP ERROR')
+      fail RuntimeError, xml_doc.xpath('//body').text
+    end
+    xml_doc
+  end
 
   def xml_doc
     @xml_doc ||= Nokogiri::XML(xml)
