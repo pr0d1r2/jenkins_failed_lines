@@ -4,6 +4,7 @@ require 'rubygems'
 require 'net/http'
 require 'nokogiri'
 require 'fileutils'
+require 'mechanize'
 
 class JenkinsFailedLines
   attr_accessor :scheme_with_host, :job, :build
@@ -139,20 +140,32 @@ class JenkinsFailedLines
   end
 
   def fetch(url)
-    uri = URI(url)
-
-    req = Net::HTTP::Post.new(uri)
-    req.basic_auth JENKINS_LOGIN, JENKINS_TOKEN
-
-    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
-      http.request(req)
-    end
-
-    res.body
+    # TODO: debugging
+    puts
+    puts "'#{csrf_crumb}'"
+    puts "'#{csrf_header_name}'"
+    puts "'#{csrf_header_value}'"
+    puts "'#{url}'"
+    puts
+    agent = Mechanize.new
+    agent.add_auth(request_url, JENKINS_LOGIN, JENKINS_TOKEN)
+    agent.post(request_url, [], {csrf_header_name => csrf_header_value}).body
   end
 
   def request_url
     %W[#{scheme_with_host} job #{job} #{build} testReport api xml].join('/')
+  end
+
+  def csrf_header_name
+    csrf_crumb.split(':').first
+  end
+
+  def csrf_header_value
+    csrf_crumb.split(':').last
+  end
+
+  def csrf_crumb
+    @csrf_crumb ||= `wget -q --auth-no-challenge --user #{JENKINS_LOGIN} --password #{JENKINS_TOKEN} --output-document - '#{scheme_with_host}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)'`
   end
 
   def cache(report = nil)
