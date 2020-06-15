@@ -15,11 +15,11 @@ GEM
       ntlm-http (~> 0.1, >= 0.1.1)
       webrobots (>= 0.0.9, < 0.2)
     mime-types (2.99.3)
-    mini_portile2 (2.3.0)
+    mini_portile2 (2.4.0)
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
-    nokogiri (1.8.1)
-      mini_portile2 (~> 2.3.0)
+    nokogiri (1.10.9)
+      mini_portile2 (~> 2.4.0)
     ntlm-http (0.1.1)
     unf (0.1.4)
       unf_ext
@@ -34,4 +34,4 @@ DEPENDENCIES
   nokogiri
 
 BUNDLED WITH
-   1.13.7
+   1.17.2
